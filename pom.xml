@@ -5,7 +5,7 @@
 	<groupId>ug</groupId>
 	<artifactId>projekt</artifactId>
 	<packaging>war</packaging>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<name>projekt</name>
 
 	<properties>
@@ -88,6 +88,16 @@
         		<groupId>com.vaadin</groupId>
         		<artifactId>vaadin-client-compiled					</artifactId>
         		<version>${vaadin.version}</version>
+    		</dependency>
+		<dependency>
+        		<groupId>org.mongodb</groupId>
+        		<artifactId>mongo-java-driver</artifactId>
+        		<version>3.0.4</version>
+    		</dependency>
+		<dependency>
+        		<groupId>org.mongodb</groupId>
+        		<artifactId>bson</artifactId>
+        		<version>3.0.4</version>
     		</dependency>
 	</dependencies>
 

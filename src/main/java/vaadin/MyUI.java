@@ -4,7 +4,6 @@ import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.annotations.Widgetset;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
@@ -14,6 +13,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -88,6 +88,23 @@ public class MyUI extends UI {
     	Button register = new Button("Registration");
     	
     	Label loginInfo = new Label("This username is already taken");
+    	
+    	login.addClickListener(new Button.ClickListener() {
+			
+			@Override
+			public void buttonClick(ClickEvent event) {
+				Notification.show("Logging in is not yet supported.",Notification.Type.ERROR_MESSAGE);
+				
+			}
+		});
+    	
+    	forgot.addClickListener(new Button.ClickListener() {
+			
+			@Override
+			public void buttonClick(ClickEvent event) {
+				UI.getCurrent().addWindow(new PasswordResetWindow());
+			}
+		});
     	
     	// 1st line of Grid
     	loginForm.addComponent(username);
