@@ -18,6 +18,7 @@ import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.Runo;
 
 import vaadin.views.contestants.ContestantsView;
 import vaadin.views.registration.RegistrationView;
@@ -30,15 +31,21 @@ import vaadin.views.registration.RegistrationView;
  * overridden to add component to the user interface and initialize non-component functionality.
  */
 @Theme("mytheme")
+//@SuppressWarnings("serial")
 public class MyUI extends UI {
 	
    
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-        final VerticalLayout layout = new VerticalLayout();
+        final CssLayout layout = new CssLayout();
         final CssLayout topBar = new CssLayout();
         final CssLayout viewLayout = new CssLayout();
+        
+        topBar.setHeight("90px");
+        topBar.setWidth("100%");
+        viewLayout.setSizeFull();
+        
         layout.addComponent(topBar);
         layout.addComponent(viewLayout);
         
@@ -83,11 +90,20 @@ public class MyUI extends UI {
     	Label info = new Label("Don't have account yet?");
     	PasswordField password = new PasswordField("password");
     	
+    	username.addStyleName("item");
+    	password.addStyleName("item");
+    	username.addStyleName("centered");
+    	password.addStyleName("centered");
+    	
+    	
+    	
     	Button login = new Button("Log in");
     	Button forgot = new Button("forgot password?");
     	Button register = new Button("Registration");
     	
     	Label loginInfo = new Label("This username is already taken");
+    	
+    	login.setSizeFull();
     	
     	login.addClickListener(new Button.ClickListener() {
 			
@@ -97,9 +113,9 @@ public class MyUI extends UI {
 				
 			}
 		});
-    	
+    	forgot.addStyleName(Runo.BUTTON_LINK);	
     	forgot.addClickListener(new Button.ClickListener() {
-			
+		
 			@Override
 			public void buttonClick(ClickEvent event) {
 				UI.getCurrent().addWindow(new PasswordResetWindow());

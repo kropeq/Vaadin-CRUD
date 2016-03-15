@@ -31,7 +31,7 @@ public class SqlContainerService implements ContainerService {
 	private SQLContainer constructContainer(TableQuery query){
 		try { 
 			SQLContainer container = new SQLContainer(query);
-			container.setAutoCommit(false);
+			container.setAutoCommit(true);
 			return container;
 		} catch(SQLException e ){
 			e.printStackTrace();

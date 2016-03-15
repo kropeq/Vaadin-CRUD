@@ -77,7 +77,7 @@ public class RegistrationView extends FormLayout implements View, Button.ClickLi
 		});
 		
 		this.fieldGroup.bind(this.username, "username");
-		this.fieldGroup.bind(this.passwd, "password");
+		this.fieldGroup.bind(this.passwd, "passwd");
 		//this.fieldGroup.bind(this.retyped, "retyped");
 	}
 	
@@ -95,18 +95,18 @@ public class RegistrationView extends FormLayout implements View, Button.ClickLi
 		if(this.fieldGroup.isValid()){
 			try{
 				this.fieldGroup.commit();
-				((SQLContainer)container).commit();
+				//((SQLContainer)container).commit();
 				this.register.setEnabled(false);
 				Notification.show("Your account has been created.");
 			} catch(CommitException e){
 				e.printStackTrace();
 				Notification.show("The data could not be saved.","Error message: "+e.getMessage(), Notification.Type.ERROR_MESSAGE);
-			} catch (UnsupportedOperationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			//} catch (UnsupportedOperationException e) {
+			//	// TODO Auto-generated catch block
+			//	e.printStackTrace();
+			//} catch (SQLException e) {
+			//	// TODO Auto-generated catch block
+			//	e.printStackTrace();
 			}
 		} else Notification.show("One or more fields contains invalid values.");
 		

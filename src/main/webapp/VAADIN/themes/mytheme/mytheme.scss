@@ -35,4 +35,17 @@
   @include valo;
 
   // Insert your own theme rules here
+  .v-caption-item {
+      color: red;
+      font-weight: bold;
+  }
+    
+  .v-caption-centered, input.centered {
+      text-align: center;
+  }
+    
+  .v-button-caption:hover {
+      text-decoration: underline;
+      color: red;
+  }
 }

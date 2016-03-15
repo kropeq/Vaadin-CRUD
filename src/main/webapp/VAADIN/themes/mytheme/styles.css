@@ -12932,3 +12932,17 @@ div.v-layout.v-horizontal.v-widget {
 	width: 19px;
 	overflow: hidden;
 }
+
+.mytheme .v-caption-item {
+	color: red;
+	font-weight: bold;
+}
+
+.mytheme .v-caption-centered, .mytheme input.centered {
+	text-align: center;
+}
+
+.mytheme .v-button-caption:hover {
+	text-decoration: underline;
+	color: red;
+}
