@@ -9,16 +9,9 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.Runo;
 
 import vaadin.views.ContestantsView;
 import vaadin.views.LoginView;
@@ -35,9 +28,11 @@ import vaadin.views.RegistrationView;
 //@SuppressWarnings("serial")
 public class MyUI extends UI {
 	
+	private Button sessionTest;
+	public Button logout;
+	//public Button login;
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-    	getSession().setAttribute("username", null);
         final CssLayout layout = new CssLayout();
         final CssLayout topBar = new CssLayout();
         final CssLayout viewLayout = new CssLayout();
@@ -56,10 +51,29 @@ public class MyUI extends UI {
         navigator.addView("Contestants", ContestantsView.class);
         navigator.addView("Login", LoginView.class);
         
-        navigator.navigateTo("Contestants");
+        navigator.navigateTo("Registration");
         for(String s: new String[]{"Registration", "Contestants", "Login"})
         	topBar.addComponent(this.createNavigationButton(s, navigator, topBar));
         
+        logout = new Button("Logout");
+        logout.setVisible(false);
+        topBar.addComponent(logout);
+        
+        sessionTest = new Button("Check session");
+        topBar.addComponent(sessionTest);
+
+        sessionTest.addClickListener(new Button.ClickListener() {
+			
+			@Override
+			public void buttonClick(ClickEvent event) {
+				String username_test = String.valueOf(getSession().getAttribute("username"));
+				if(username_test != "null"){
+					Notification.show("Your nick in this session is: "+username_test,Notification.Type.HUMANIZED_MESSAGE);
+				} else {
+					Notification.show("Session is unrecognized.",Notification.Type.ERROR_MESSAGE);
+				}
+			}
+		});
         //topBar.addComponent(this.createLoginForm());
     }
 
@@ -68,7 +82,22 @@ public class MyUI extends UI {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
-				navigator.navigateTo(state);
+				String username_test = String.valueOf(getSession().getAttribute("username"));
+				if(state=="Contestants"){
+					if(username_test != "null"){
+						navigator.navigateTo(state);
+					} else {
+						Notification.show("You aren't logged in! You can't go to this section.",Notification.Type.ERROR_MESSAGE);
+					}
+				} else if (state=="Login"){
+					if(username_test != "null"){
+					Notification.show("You are logged in already! You can do it only once.",Notification.Type.ERROR_MESSAGE);
+					} else {
+						navigator.navigateTo(state);
+					}
+				} else {
+					navigator.navigateTo(state);
+				}
 			}
 		});
     }
@@ -78,4 +107,5 @@ public class MyUI extends UI {
     @VaadinServletConfiguration(productionMode = false, ui = MyUI.class)
     public static class MyUIServlet extends VaadinServlet {
     }
+
 }

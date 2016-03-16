@@ -2,7 +2,6 @@ package vaadin.views;
 
 
 import com.vaadin.data.Validator;
-import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button;
@@ -11,10 +10,8 @@ import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 
-//import vaadin.MyUI;
 import vaadin.models.User;
 import vaadin.services.UserService;
 
@@ -23,24 +20,20 @@ public class RegistrationView extends FormLayout implements View, Button.ClickLi
 	private TextField username = new TextField("Type your username: ");
 	private PasswordField passwd = new PasswordField("Type your password: ");
 	private PasswordField retyped = new PasswordField("Retype your password: ");
-	private TextArea info = new TextArea("Użytkownik: ");
 	private Button register = new Button("Register me",this);
 	
 	private User user;
 	private UserService userservice;
-	//private MyUI myui;
 	
 	public RegistrationView(){
 		super();
 		
 		userservice = new UserService();
 		
-		this.info.setHeight("100px");
 		this.addComponent(this.username);
 		this.addComponent(this.passwd);
 		this.addComponent(this.retyped);
 		this.addComponent(this.register);
-		this.addComponent(this.info);
 		
 		// ustawienie "wymagane" do kazdego z pol rejestracji
 		for(Field<?> f: new Field<?>[]{ this.username, this.passwd, this.retyped }){
@@ -98,25 +91,23 @@ public class RegistrationView extends FormLayout implements View, Button.ClickLi
 		// stworzenie nowego Usera na podstawie wpisanych danych
 		user = new User(this.username.getValue(),this.passwd.getValue());
 		
-		// test wpisanych wartosci
-		info.setValue(username.getValue()+"\n"+passwd.getValue());
 		// sprawdzenie walidacji loginu i hasla
 		if(username.isValid() && passwd.isValid() && retyped.isValid()){
 			// sprawdzenie czy istnieje juz taki login i haslo
 			if(!userservice.isAlreadyRegistered(user)){
 				// jesli nie to tworzymy nowy
 				userservice.addUser(user);
-				Notification.show("Your account has been created.");
+				Notification.show("Account "+username.getValue()+" has been created.");
 				username.setValue("");
 				passwd.setValue("");
 				retyped.setValue("");
-				//getSession().setAttribute("username", username.getValue());
 				
 				getUI().getNavigator().navigateTo("Login");
 				
 				// jesli tak to wyswietlamy komunikat, ze jest zajety
 			} else {
-				Notification.show("This account has been already created. ");
+				Notification.show(username.getValue()+" account already exist! Choose another account name. ",Notification.Type.ERROR_MESSAGE);
+				username.clear();
 			}
 		} else Notification.show("One or more fields contains invalid values.");
 		

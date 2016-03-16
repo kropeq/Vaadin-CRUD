@@ -3,7 +3,6 @@ package vaadin.views;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Notification;
@@ -16,6 +15,7 @@ import com.vaadin.ui.themes.Runo;
 import vaadin.PasswordResetWindow;
 import vaadin.models.User;
 import vaadin.services.UserService;
+import vaadin.MyUI;
 
 public class LoginView extends FormLayout implements View, Button.ClickListener {
 	
@@ -26,7 +26,7 @@ public class LoginView extends FormLayout implements View, Button.ClickListener 
 	private PasswordField password;
 	private Button login;
 	private Button forgot;
-	private Button test;
+	private MyUI myui;
 	
 	public LoginView(){
 		super();
@@ -42,49 +42,33 @@ public class LoginView extends FormLayout implements View, Button.ClickListener 
     	username.addStyleName("centered");
     	password.addStyleName("centered");
     	
-    	login = new Button("Log in");
-    	forgot = new Button("forgot password?");
-    	test = new Button("Sprawdz sesje");
+    	login = new Button("Zaloguj");
+    	forgot = new Button("Zapomniałeś hasła?");
     	
     	login.setSizeFull();
-    	
     	login.addClickListener(new Button.ClickListener() {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
 				user = new User(username.getValue(),password.getValue());
 				String username_test = String.valueOf(getSession().getAttribute("username"));
-				if(userservice.isAlreadyRegistered(user)){
-					Notification.show("Zalogowano!",Notification.Type.HUMANIZED_MESSAGE);
+				if(userservice.isAlreadyRegistered(user)){	
 					getSession().setAttribute("username", username.getValue());
+					Notification.show("You are logged in as "+getSession().getAttribute("username")+"!",Notification.Type.HUMANIZED_MESSAGE);
 					try {
 						Thread.sleep(2000);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					//myui.logout.setVisible(true);
 					getUI().getNavigator().navigateTo("Contestants");
 				} else {
-					Notification.show("Nie ma takiego uzytkownika!",Notification.Type.ERROR_MESSAGE);
+					Notification.show("There is no account named in this way!",Notification.Type.ERROR_MESSAGE);
 				}
-
 			}
 		});
     	
-    	test.addClickListener(new Button.ClickListener() {
-			
-			@Override
-			public void buttonClick(ClickEvent event) {
-				String username_test = String.valueOf(getSession().getAttribute("username"));
-				if(username_test != "null"){
-					Notification.show("Sesja jest zapisana! Nick to: "+username_test,Notification.Type.ERROR_MESSAGE);
-				} else {
-					Notification.show("Nie ma zapisanej sesji",Notification.Type.ERROR_MESSAGE);
-				}
-				
-				
-			}
-		});
 
     	forgot.addStyleName(Runo.BUTTON_LINK);	
     	forgot.addClickListener(new Button.ClickListener() {
@@ -102,7 +86,6 @@ public class LoginView extends FormLayout implements View, Button.ClickListener 
     	// 2nd line of Grid
     	loginForm.addComponent(login);
     	loginForm.addComponent(forgot);
-    	loginForm.addComponent(test);
     	
     	this.addComponent(loginForm);
 	}
