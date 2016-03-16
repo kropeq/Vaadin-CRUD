@@ -9,6 +9,7 @@ import com.vaadin.data.Container;
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.connection.JDBCConnectionPool;
 import com.vaadin.data.util.sqlcontainer.connection.SimpleJDBCConnectionPool;
+import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
 import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 
 import vaadin.services.ContainerService;
@@ -21,7 +22,7 @@ public class SqlContainerService implements ContainerService {
 	public SqlContainerService() throws SQLException {
 		JDBCConnectionPool pool = new SimpleJDBCConnectionPool(
 				"org.postgresql.Driver",
-				"jdbc:postgresql://localhost:5432/projekt",
+				"jdbc:postgresql://localhost:5432/postgres",
 				"postgres",
 				"vaadin");
 		this.usersTable = new TableQuery("users",pool);

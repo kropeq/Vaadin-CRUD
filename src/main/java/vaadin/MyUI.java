@@ -34,8 +34,6 @@ import vaadin.views.registration.RegistrationView;
 //@SuppressWarnings("serial")
 public class MyUI extends UI {
 	
-   
-
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         final CssLayout layout = new CssLayout();
@@ -49,18 +47,6 @@ public class MyUI extends UI {
         layout.addComponent(topBar);
         layout.addComponent(viewLayout);
         
-        /*final TextField name = new TextField();
-        name.setCaption("Type your name here:");
-
-        Button button = new Button("Click Me");
-        button.addClickListener( e -> {
-            layout.addComponent(new Label("Thanks " + name.getValue() 
-                    + ", it works!"));
-        });
-        
-        layout.addComponents(name, button);
-        layout.setMargin(true);
-        layout.setSpacing(true);*/
         setContent(layout);
         
         final Navigator navigator = new Navigator(this, viewLayout);

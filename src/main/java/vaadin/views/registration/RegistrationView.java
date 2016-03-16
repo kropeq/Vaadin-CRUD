@@ -1,51 +1,52 @@
 package vaadin.views.registration;
 
-import java.sql.SQLException;
 
-import com.vaadin.data.Container;
 import com.vaadin.data.Validator;
-import com.vaadin.data.Validator.InvalidValueException;
-import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-//import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 
-import vaadin.services.ServiceProvider;
+import vaadin.models.User;
+import vaadin.services.UserService;
 
 public class RegistrationView extends FormLayout implements View, Button.ClickListener {
 	
 	private TextField username = new TextField("Type your username: ");
 	private PasswordField passwd = new PasswordField("Type your password: ");
 	private PasswordField retyped = new PasswordField("Retype your password: ");
-	
-	private FieldGroup fieldGroup = new FieldGroup();
-	
-	private Container container;
-	
+	private TextArea info = new TextArea("Użytkownik: ");
 	private Button register = new Button("Register me",this);
+	
+	private User user;
+	private UserService userservice;
 	
 	public RegistrationView(){
 		super();
+		
+		userservice = new UserService();
+		
+		this.info.setHeight("100px");
 		this.addComponent(this.username);
 		this.addComponent(this.passwd);
 		this.addComponent(this.retyped);
 		this.addComponent(this.register);
+		this.addComponent(this.info);
 		
+		// ustawienie "wymagane" do kazdego z pol rejestracji
 		for(Field<?> f: new Field<?>[]{ this.username, this.passwd, this.retyped }){
 			f.setRequired(true);
 			f.setRequiredError("This field is required.");
 		}
 		
+		// validator na podstawie tutorialu
+		// sprawdza czy username jest co najmniej dlugosci 5 liter i czy zawiera tylko litery
 		this.username.addValidator(new Validator(){
 			
 			@Override
@@ -56,6 +57,8 @@ public class RegistrationView extends FormLayout implements View, Button.ClickLi
 			}
 		});
 		
+		// validator na podstawie tutorialu
+		// sprawdza czy haslo to ciag liter oraz przynajmniej jednej cyfry
 		this.passwd.addValidator(new Validator(){
 			
 			@Override
@@ -67,46 +70,45 @@ public class RegistrationView extends FormLayout implements View, Button.ClickLi
 			}
 		});
 		
+		// validator na podstawie tutorialu
+		// sprawdza czy haslo i powtorzone haslo sie zgadzaja
 		this.retyped.addValidator(new Validator(){
 			@Override
 			public void validate(Object value) throws InvalidValueException {
 				String retyped = value == null ? "" : value.toString();
 				if(!retyped.equals(passwd.getValue())) throw new InvalidValueException("password and retyped password doesn't match");
 			}
-			
 		});
-		
-		this.fieldGroup.bind(this.username, "username");
-		this.fieldGroup.bind(this.passwd, "passwd");
-		//this.fieldGroup.bind(this.retyped, "retyped");
 	}
 	
 	
 	@Override
 	public void enter(ViewChangeEvent event) {
-		this.container = ServiceProvider.getInstance().getContainerService().getUsersContainer();
-		Object newUserId = this.container.addItem();
-		this.fieldGroup.setItemDataSource(this.container.getItem(newUserId));
+		// ustawienie kursora w polu username
+		username.focus();
 	}
 
 
 	@Override
 	public void buttonClick(ClickEvent event) {
-		if(this.fieldGroup.isValid()){
-			try{
-				this.fieldGroup.commit();
-				//((SQLContainer)container).commit();
-				this.register.setEnabled(false);
+		String username_text = username.getValue();
+		String password_text = passwd.getValue();
+		
+		// stworzenie nowego Usera na podstawie wpisanych danych
+		user = new User(this.username.getValue(),this.passwd.getValue());
+		
+		// test wpisanych wartosci
+		info.setValue(username_text+"\n"+password_text);
+		// sprawdzenie walidacji loginu i hasla
+		if(username.isValid() && passwd.isValid() && retyped.isValid()){
+			// sprawdzenie czy istnieje juz taki login i haslo
+			if(!userservice.isAlreadyRegistered(user)){
+				// jesli nie to tworzymy nowy
+				userservice.addUser(user);
 				Notification.show("Your account has been created.");
-			} catch(CommitException e){
-				e.printStackTrace();
-				Notification.show("The data could not be saved.","Error message: "+e.getMessage(), Notification.Type.ERROR_MESSAGE);
-			//} catch (UnsupportedOperationException e) {
-			//	// TODO Auto-generated catch block
-			//	e.printStackTrace();
-			//} catch (SQLException e) {
-			//	// TODO Auto-generated catch block
-			//	e.printStackTrace();
+				// jesli tak to wyswietlamy komunikat, ze jest zajety
+			} else {
+				Notification.show("This account has been already created. ");
 			}
 		} else Notification.show("One or more fields contains invalid values.");
 		
