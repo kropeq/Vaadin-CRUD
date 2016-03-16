@@ -1,7 +1,8 @@
-package vaadin.views.registration;
+package vaadin.views;
 
 
 import com.vaadin.data.Validator;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button;
@@ -13,6 +14,7 @@ import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 
+//import vaadin.MyUI;
 import vaadin.models.User;
 import vaadin.services.UserService;
 
@@ -26,6 +28,7 @@ public class RegistrationView extends FormLayout implements View, Button.ClickLi
 	
 	private User user;
 	private UserService userservice;
+	//private MyUI myui;
 	
 	public RegistrationView(){
 		super();
@@ -91,14 +94,12 @@ public class RegistrationView extends FormLayout implements View, Button.ClickLi
 
 	@Override
 	public void buttonClick(ClickEvent event) {
-		String username_text = username.getValue();
-		String password_text = passwd.getValue();
-		
+	
 		// stworzenie nowego Usera na podstawie wpisanych danych
 		user = new User(this.username.getValue(),this.passwd.getValue());
 		
 		// test wpisanych wartosci
-		info.setValue(username_text+"\n"+password_text);
+		info.setValue(username.getValue()+"\n"+passwd.getValue());
 		// sprawdzenie walidacji loginu i hasla
 		if(username.isValid() && passwd.isValid() && retyped.isValid()){
 			// sprawdzenie czy istnieje juz taki login i haslo
@@ -106,6 +107,13 @@ public class RegistrationView extends FormLayout implements View, Button.ClickLi
 				// jesli nie to tworzymy nowy
 				userservice.addUser(user);
 				Notification.show("Your account has been created.");
+				username.setValue("");
+				passwd.setValue("");
+				retyped.setValue("");
+				//getSession().setAttribute("username", username.getValue());
+				
+				getUI().getNavigator().navigateTo("Login");
+				
 				// jesli tak to wyswietlamy komunikat, ze jest zajety
 			} else {
 				Notification.show("This account has been already created. ");

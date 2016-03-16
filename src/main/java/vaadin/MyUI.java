@@ -20,8 +20,9 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.Runo;
 
-import vaadin.views.contestants.ContestantsView;
-import vaadin.views.registration.RegistrationView;
+import vaadin.views.ContestantsView;
+import vaadin.views.LoginView;
+import vaadin.views.RegistrationView;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
@@ -36,6 +37,7 @@ public class MyUI extends UI {
 	
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+    	getSession().setAttribute("username", null);
         final CssLayout layout = new CssLayout();
         final CssLayout topBar = new CssLayout();
         final CssLayout viewLayout = new CssLayout();
@@ -52,12 +54,13 @@ public class MyUI extends UI {
         final Navigator navigator = new Navigator(this, viewLayout);
         navigator.addView("Registration", RegistrationView.class);
         navigator.addView("Contestants", ContestantsView.class);
+        navigator.addView("Login", LoginView.class);
         
         navigator.navigateTo("Contestants");
-        for(String s: new String[]{"Registration", "Contestants"})
+        for(String s: new String[]{"Registration", "Contestants", "Login"})
         	topBar.addComponent(this.createNavigationButton(s, navigator, topBar));
         
-        topBar.addComponent(this.createLoginForm());
+        //topBar.addComponent(this.createLoginForm());
     }
 
     private Button createNavigationButton(final String state, final Navigator navigator, final CssLayout topBar){
@@ -70,59 +73,6 @@ public class MyUI extends UI {
 		});
     }
     
-    private Component createLoginForm(){
-    	GridLayout loginForm = new GridLayout(3,3);
-    	TextField username = new TextField("username");
-    	Label info = new Label("Don't have account yet?");
-    	PasswordField password = new PasswordField("password");
-    	
-    	username.addStyleName("item");
-    	password.addStyleName("item");
-    	username.addStyleName("centered");
-    	password.addStyleName("centered");
-    	
-    	
-    	
-    	Button login = new Button("Log in");
-    	Button forgot = new Button("forgot password?");
-    	Button register = new Button("Registration");
-    	
-    	Label loginInfo = new Label("This username is already taken");
-    	
-    	login.setSizeFull();
-    	
-    	login.addClickListener(new Button.ClickListener() {
-			
-			@Override
-			public void buttonClick(ClickEvent event) {
-				Notification.show("Logging in is not yet supported.",Notification.Type.ERROR_MESSAGE);
-				
-			}
-		});
-    	forgot.addStyleName(Runo.BUTTON_LINK);	
-    	forgot.addClickListener(new Button.ClickListener() {
-		
-			@Override
-			public void buttonClick(ClickEvent event) {
-				UI.getCurrent().addWindow(new PasswordResetWindow());
-			}
-		});
-    	
-    	// 1st line of Grid
-    	loginForm.addComponent(username);
-    	loginForm.addComponent(password);
-    	loginForm.addComponent(info);
-    	
-    	// 2nd line of Grid
-    	loginForm.addComponent(login);
-    	loginForm.addComponent(forgot);
-    	loginForm.addComponent(register);
-    	
-    	// 3rd line of Grid
-    	//loginForm.addComponent(loginInfo);
-    	
-    	return loginForm;
-    }
 
     @WebServlet(value = "/*", asyncSupported = true)
     @VaadinServletConfiguration(productionMode = false, ui = MyUI.class)

@@ -1,4 +1,4 @@
-package vaadin.views.contestants;
+package vaadin.views;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
