@@ -28,9 +28,9 @@ import vaadin.views.RegistrationView;
 //@SuppressWarnings("serial")
 public class MyUI extends UI {
 	
-	private Button sessionTest;
-	public Button logout;
-	//public Button login;
+	public static Button sessionTest;
+	public static Button logout;
+	public static Button login;
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         final CssLayout layout = new CssLayout();
@@ -52,8 +52,11 @@ public class MyUI extends UI {
         navigator.addView("Login", LoginView.class);
         
         navigator.navigateTo("Registration");
-        for(String s: new String[]{"Registration", "Contestants", "Login"})
+        for(String s: new String[]{"Registration", "Contestants"})
         	topBar.addComponent(this.createNavigationButton(s, navigator, topBar));
+        
+        login = new Button("Login");
+        topBar.addComponent(login);
         
         logout = new Button("Logout");
         logout.setVisible(false);
@@ -61,6 +64,37 @@ public class MyUI extends UI {
         
         sessionTest = new Button("Check session");
         topBar.addComponent(sessionTest);
+        
+        login.addClickListener(new Button.ClickListener() {
+			
+			@Override
+			public void buttonClick(ClickEvent event) {
+			String username_test = String.valueOf(getSession().getAttribute("username"));
+			if(username_test != "null"){
+				Notification.show("You are logged in already! You can do it only once.",Notification.Type.ERROR_MESSAGE);
+			} else {
+				navigator.navigateTo("Login");
+			}
+        }
+        });
+        
+        logout.addClickListener(new Button.ClickListener() {
+			
+			@Override
+			public void buttonClick(ClickEvent event) {
+				Notification.show("You are logged in already! You can do it only once.",Notification.Type.ERROR_MESSAGE);
+				//
+				logout.setVisible(false);
+				login.setVisible(true);
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				navigator.navigateTo("Login");
+			}
+        });
 
         sessionTest.addClickListener(new Button.ClickListener() {
 			
@@ -88,12 +122,6 @@ public class MyUI extends UI {
 						navigator.navigateTo(state);
 					} else {
 						Notification.show("You aren't logged in! You can't go to this section.",Notification.Type.ERROR_MESSAGE);
-					}
-				} else if (state=="Login"){
-					if(username_test != "null"){
-					Notification.show("You are logged in already! You can do it only once.",Notification.Type.ERROR_MESSAGE);
-					} else {
-						navigator.navigateTo(state);
 					}
 				} else {
 					navigator.navigateTo(state);

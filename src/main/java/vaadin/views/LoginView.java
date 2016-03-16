@@ -26,11 +26,10 @@ public class LoginView extends FormLayout implements View, Button.ClickListener 
 	private PasswordField password;
 	private Button login;
 	private Button forgot;
-	private MyUI myui;
 	
 	public LoginView(){
 		super();
-		
+
 		userservice = new UserService();
 
 		loginForm = new GridLayout(2,2);
@@ -61,7 +60,8 @@ public class LoginView extends FormLayout implements View, Button.ClickListener 
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					//myui.logout.setVisible(true);
+					MyUI.login.setVisible(false);
+					MyUI.logout.setVisible(true);
 					getUI().getNavigator().navigateTo("Contestants");
 				} else {
 					Notification.show("There is no account named in this way!",Notification.Type.ERROR_MESSAGE);
