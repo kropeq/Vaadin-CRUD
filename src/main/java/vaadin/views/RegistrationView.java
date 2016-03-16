@@ -1,6 +1,5 @@
 package vaadin.views;
 
-
 import com.vaadin.data.Validator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -29,11 +28,12 @@ public class RegistrationView extends FormLayout implements View, Button.ClickLi
 		super();
 		
 		userservice = new UserService();
-		
+		this.setSizeFull();
 		this.addComponent(this.username);
 		this.addComponent(this.passwd);
 		this.addComponent(this.retyped);
 		this.addComponent(this.register);
+		this.setMargin(true);
 		
 		// ustawienie "wymagane" do kazdego z pol rejestracji
 		for(Field<?> f: new Field<?>[]{ this.username, this.passwd, this.retyped }){

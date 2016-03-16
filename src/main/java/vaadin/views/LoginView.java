@@ -16,6 +16,7 @@ import vaadin.PasswordResetWindow;
 import vaadin.models.User;
 import vaadin.services.UserService;
 import vaadin.MyUI;
+import vaadin.views.ContestantsView;
 
 public class LoginView extends FormLayout implements View, Button.ClickListener {
 	
@@ -50,7 +51,7 @@ public class LoginView extends FormLayout implements View, Button.ClickListener 
 			@Override
 			public void buttonClick(ClickEvent event) {
 				user = new User(username.getValue(),password.getValue());
-				String username_test = String.valueOf(getSession().getAttribute("username"));
+				
 				if(userservice.isAlreadyRegistered(user)){	
 					getSession().setAttribute("username", username.getValue());
 					Notification.show("You are logged in as "+getSession().getAttribute("username")+"!",Notification.Type.HUMANIZED_MESSAGE);
@@ -62,6 +63,8 @@ public class LoginView extends FormLayout implements View, Button.ClickListener 
 					}
 					MyUI.login.setVisible(false);
 					MyUI.logout.setVisible(true);
+					String username_text = String.valueOf(getSession().getAttribute("username"));
+					ContestantsView.userInSession = username_text;
 					getUI().getNavigator().navigateTo("Contestants");
 				} else {
 					Notification.show("There is no account named in this way!",Notification.Type.ERROR_MESSAGE);
@@ -86,6 +89,7 @@ public class LoginView extends FormLayout implements View, Button.ClickListener 
     	// 2nd line of Grid
     	loginForm.addComponent(login);
     	loginForm.addComponent(forgot);
+    	loginForm.setMargin(true);
     	
     	this.addComponent(loginForm);
 	}

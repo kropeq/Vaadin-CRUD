@@ -16,6 +16,8 @@ import com.vaadin.ui.UI;
 import vaadin.views.ContestantsView;
 import vaadin.views.LoginView;
 import vaadin.views.RegistrationView;
+import vaadin.services.UserService;
+import vaadin.models.User;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
@@ -31,8 +33,15 @@ public class MyUI extends UI {
 	public static Button sessionTest;
 	public static Button logout;
 	public static Button login;
+	private User user;
+	private UserService userservice;
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+    	
+    	userservice = new UserService();
+    	user = new User("admin","admin2");
+    	userservice.addUser(user);
+    	
         final CssLayout layout = new CssLayout();
         final CssLayout topBar = new CssLayout();
         final CssLayout viewLayout = new CssLayout();
@@ -82,8 +91,8 @@ public class MyUI extends UI {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
-				Notification.show("You are logged in already! You can do it only once.",Notification.Type.ERROR_MESSAGE);
-				//
+				getSession().setAttribute("username", null);
+				//Notification.show("You are logged in already! You can do it only once.",Notification.Type.ERROR_MESSAGE);
 				logout.setVisible(false);
 				login.setVisible(true);
 				try {
