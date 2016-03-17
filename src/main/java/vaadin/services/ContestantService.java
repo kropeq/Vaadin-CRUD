@@ -7,6 +7,7 @@ import vaadin.models.Contestant;
 
 public class ContestantService {
 	private static List<Contestant> listOfContestants= new ArrayList<Contestant>();
+	private Contestant contestant;
 	
 	public long addContestant(Contestant contestant) {
 		listOfContestants.add(contestant);
@@ -30,9 +31,9 @@ public class ContestantService {
 		} return 0;
 	}
 	
-	public long deleteContestant(Integer index) {
-		listOfContestants.remove(index);
-		return 1;
+	public Integer deleteContestant(Integer index) {	
+		listOfContestants.remove((int)index);
+		return index;
 	}
 	
 	public List<Contestant> getContestants() {

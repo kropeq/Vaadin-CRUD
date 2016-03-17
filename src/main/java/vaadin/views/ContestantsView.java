@@ -136,7 +136,8 @@ public class ContestantsView extends CssLayout implements View {
 				
 				if(contestantservice.isBibInStartlist(contestant)){	
 					Integer index = contestantservice.getIndexOfContestantToRemove(contestant);
-					contestantservice.deleteContestant(index);
+					Integer sprawdzam = contestantservice.deleteContestant(index);
+					Notification.show(" "+sprawdzam,Notification.Type.ERROR_MESSAGE);
 					contestantName.clear();
 					contestantSurname.clear();
 					contestantBib.clear();
