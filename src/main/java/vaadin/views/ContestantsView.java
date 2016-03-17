@@ -136,14 +136,42 @@ public class ContestantsView extends CssLayout implements View {
 				
 				if(contestantservice.isBibInStartlist(contestant)){	
 					Integer index = contestantservice.getIndexOfContestantToRemove(contestant);
-					Integer sprawdzam = contestantservice.deleteContestant(index);
-					Notification.show(" "+sprawdzam,Notification.Type.ERROR_MESSAGE);
+					contestantservice.deleteContestant(index);
+					//Integer sprawdzam = contestantservice.deleteContestant(index);
+					//Notification.show(" "+sprawdzam,Notification.Type.ERROR_MESSAGE);
 					contestantName.clear();
 					contestantSurname.clear();
 					contestantBib.clear();
 					contestantNation.clear();
 					contestantName.focus();
-					Notification.show("Contestants with bib "+(index+1)+" was removed!",Notification.Type.WARNING_MESSAGE);
+					Notification.show("Contestants with bib "+bib+" was removed!",Notification.Type.WARNING_MESSAGE);
+					getUI().getNavigator().navigateTo("Contestants");
+				} else {
+					Notification.show("This bib is not in the startlist!",Notification.Type.ERROR_MESSAGE);
+				}
+			}
+		});
+		
+		updateContestant.addClickListener(new Button.ClickListener() {
+			
+			@Override
+			public void buttonClick(ClickEvent event) {
+				Integer bib = Integer.parseInt(contestantBib.getValue());
+				contestant = new Contestant(bib,"nic","nic","nic");
+				
+				if(contestantservice.isBibInStartlist(contestant)){	
+					Integer index = contestantservice.getIndexOfContestantToRemove(contestant);
+					contestant = new Contestant(bib,contestantName.getValue(),contestantSurname.getValue(),contestantNation.getValue());
+					contestantservice.updateContestant(contestant,index);
+					//Integer sprawdzam = contestantservice.deleteContestant(index);
+					//Notification.show(" "+sprawdzam,Notification.Type.ERROR_MESSAGE);
+					contestantName.clear();
+					contestantSurname.clear();
+					contestantBib.clear();
+					contestantNation.clear();
+					contestantName.focus();
+					Notification.show("Contestants with bib "+bib+" was updated!",Notification.Type.WARNING_MESSAGE);
+					getUI().getNavigator().navigateTo("Contestants");
 				} else {
 					Notification.show("This bib is not in the startlist!",Notification.Type.ERROR_MESSAGE);
 				}

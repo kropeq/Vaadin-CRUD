@@ -17,6 +17,8 @@ import vaadin.models.User;
 import vaadin.services.UserService;
 import vaadin.MyUI;
 import vaadin.views.ContestantsView;
+import vaadin.models.UserSession;
+import vaadin.services.UserSessionService;
 
 public class LoginView extends FormLayout implements View, Button.ClickListener {
 	
@@ -27,11 +29,14 @@ public class LoginView extends FormLayout implements View, Button.ClickListener 
 	private PasswordField password;
 	private Button login;
 	private Button forgot;
+	private UserSession usersession;
+	private UserSessionService usersessionservice;
 	
 	public LoginView(){
 		super();
 
 		userservice = new UserService();
+		usersessionservice = new UserSessionService();
 
 		loginForm = new GridLayout(2,2);
     	username = new TextField("username");
@@ -53,19 +58,29 @@ public class LoginView extends FormLayout implements View, Button.ClickListener 
 				user = new User(username.getValue(),password.getValue());
 				
 				if(userservice.isAlreadyRegistered(user)){	
-					getSession().setAttribute("username", username.getValue());
-					Notification.show("You are logged in as "+getSession().getAttribute("username")+"!",Notification.Type.HUMANIZED_MESSAGE);
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					if(userservice.checkPassword(user)){
+						if(!usersessionservice.isAlreadyInSession(new UserSession(user.getUsername()))){
+							getSession().setAttribute("username", username.getValue());
+							Notification.show("You are logged in as "+getSession().getAttribute("username")+"!",Notification.Type.HUMANIZED_MESSAGE);
+							try {
+								Thread.sleep(2000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							MyUI.login.setVisible(false);
+							MyUI.logout.setVisible(true);
+							String username_text = String.valueOf(getSession().getAttribute("username"));
+							ContestantsView.userInSession = username_text;
+							usersessionservice.addUser(new UserSession(username_text));
+							getUI().getNavigator().navigateTo("Contestants");
+						} else {
+							Notification.show("This user is already in session! You can't log in.",Notification.Type.ERROR_MESSAGE);
+						}
+					
+					} else {
+						Notification.show("Wrong password!",Notification.Type.ERROR_MESSAGE);
 					}
-					MyUI.login.setVisible(false);
-					MyUI.logout.setVisible(true);
-					String username_text = String.valueOf(getSession().getAttribute("username"));
-					ContestantsView.userInSession = username_text;
-					getUI().getNavigator().navigateTo("Contestants");
 				} else {
 					Notification.show("There is no account named in this way!",Notification.Type.ERROR_MESSAGE);
 				}

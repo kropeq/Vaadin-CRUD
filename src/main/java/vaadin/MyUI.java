@@ -17,9 +17,11 @@ import vaadin.views.ContestantsView;
 import vaadin.views.LoginView;
 import vaadin.views.RegistrationView;
 import vaadin.services.UserService;
-import vaadin.services.ContestantService;
-import vaadin.models.Contestant;
+//import vaadin.services.ContestantService;
+//import vaadin.models.Contestant;
 import vaadin.models.User;
+import vaadin.models.UserSession;
+import vaadin.services.UserSessionService;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
@@ -37,26 +39,30 @@ public class MyUI extends UI {
 	public static Button login;
 	private User user;
 	private UserService userservice;
-	private Contestant contestant;
-	private ContestantService contestantservice;
+	private UserSession usersession;
+	private UserSessionService usersessionservice;
+	//private Contestant contestant;
+	//private ContestantService contestantservice;
     @Override
     protected void init(VaadinRequest vaadinRequest) {
     	
     	userservice = new UserService();
+    	usersessionservice = new UserSessionService();
+    	
     	user = new User("admin","admin2");
     	userservice.addUser(user);
-    	
+
     	// dodanie 3 przykladowych elementow
     	// dziala sensownie tylko w momencie, 
     	// gdy jeden uzytkownik skorzysta ze strony
-    	contestantservice = new ContestantService();
+    	//contestantservice = new ContestantService();
     	
-    	contestant = new Contestant(1,"Michael","Hayboeck","Austria");
-    	contestantservice.addContestant(contestant);
-		contestant = new Contestant(2,"Michael","Uhrmann","Germany");
-		contestantservice.addContestant(contestant);
-		contestant = new Contestant(3,"Noriaki","Kasai","Japonia");
-		contestantservice.addContestant(contestant);
+    	//contestant = new Contestant(1,"Michael","Hayboeck","Austria");
+    	//contestantservice.addContestant(contestant);
+		//contestant = new Contestant(2,"Michael","Uhrmann","Germany");
+		//contestantservice.addContestant(contestant);
+		//contestant = new Contestant(3,"Noriaki","Kasai","Japonia");
+		//contestantservice.addContestant(contestant);
     	
         final CssLayout layout = new CssLayout();
         final CssLayout topBar = new CssLayout();
@@ -107,6 +113,10 @@ public class MyUI extends UI {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
+				String username_text = String.valueOf(getSession().getAttribute("username"));
+				if(usersessionservice.isAlreadyInSession(new UserSession(username_text))){
+					usersessionservice.deleteUser(new UserSession(username_text));
+				}
 				getSession().setAttribute("username", null);
 				//Notification.show("You are logged in already! You can do it only once.",Notification.Type.ERROR_MESSAGE);
 				logout.setVisible(false);

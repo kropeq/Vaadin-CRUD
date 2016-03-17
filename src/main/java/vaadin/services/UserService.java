@@ -31,4 +31,14 @@ public class UserService {
 		return false;
 	}
 	
+	public boolean checkPassword(User user) {
+		for(User u : getUsers()) {
+			if (u.getUsername().equals(user.getUsername())
+				&& u.getPassword().equals(user.getPassword())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }

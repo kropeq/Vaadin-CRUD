@@ -15,6 +15,7 @@ public class ContestantService {
 	}
 	
 	
+	
 	public boolean isBibInStartlist(Contestant contestant){
 		for(Contestant c : getContestants()) {
 			if (c.getContestantBib().equals(contestant.getContestantBib())) {
@@ -35,6 +36,13 @@ public class ContestantService {
 		listOfContestants.remove((int)index);
 		return index;
 	}
+	
+	//ArrayList.set(int index, E element)
+	public Integer updateContestant(Contestant contestant, Integer index) {	
+		listOfContestants.set((int)index,contestant);
+		return index;
+	}
+	
 	
 	public List<Contestant> getContestants() {
 		return listOfContestants;
