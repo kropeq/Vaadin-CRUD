@@ -114,8 +114,10 @@ public class MyUI extends UI {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				String username_text = String.valueOf(getSession().getAttribute("username"));
-				if(usersessionservice.isAlreadyInSession(new UserSession(username_text))){
-					usersessionservice.deleteUser(new UserSession(username_text));
+				usersession = new UserSession(String.valueOf(getSession().getAttribute("username")));
+				if(usersessionservice.isAlreadyInSession(usersession)){
+					Integer index = usersessionservice.getIndexOfUserSessionToRemove(usersession);
+					usersessionservice.deleteUser(index);
 				}
 				getSession().setAttribute("username", null);
 				//Notification.show("You are logged in already! You can do it only once.",Notification.Type.ERROR_MESSAGE);

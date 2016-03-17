@@ -59,8 +59,10 @@ public class LoginView extends FormLayout implements View, Button.ClickListener 
 				
 				if(userservice.isAlreadyRegistered(user)){	
 					if(userservice.checkPassword(user)){
-						if(!usersessionservice.isAlreadyInSession(new UserSession(user.getUsername()))){
+						if(!usersessionservice.isAlreadyInSession(new UserSession(username.getValue()))){
 							getSession().setAttribute("username", username.getValue());
+							usersession = new UserSession(username.getValue());
+							usersessionservice.addUser(usersession);
 							Notification.show("You are logged in as "+getSession().getAttribute("username")+"!",Notification.Type.HUMANIZED_MESSAGE);
 							try {
 								Thread.sleep(2000);
@@ -68,11 +70,16 @@ public class LoginView extends FormLayout implements View, Button.ClickListener 
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							MyUI.login.setVisible(false);
-							MyUI.logout.setVisible(true);
+							if(getSession().getAttribute("username").equals("null")){
+								MyUI.login.setVisible(true);
+								MyUI.logout.setVisible(false);
+							} else {
+								MyUI.login.setVisible(false);
+								MyUI.logout.setVisible(true);
+							}
 							String username_text = String.valueOf(getSession().getAttribute("username"));
 							ContestantsView.userInSession = username_text;
-							usersessionservice.addUser(new UserSession(username_text));
+							
 							getUI().getNavigator().navigateTo("Contestants");
 						} else {
 							Notification.show("This user is already in session! You can't log in.",Notification.Type.ERROR_MESSAGE);
