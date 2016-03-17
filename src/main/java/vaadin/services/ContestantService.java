@@ -13,8 +13,25 @@ public class ContestantService {
 		return 1;
 	}
 	
-	public long deleteContestant(Contestant contestant) {
-		listOfContestants.remove(listOfContestants.indexOf(contestant));
+	
+	public boolean isBibInStartlist(Contestant contestant){
+		for(Contestant c : getContestants()) {
+			if (c.getContestantBib().equals(contestant.getContestantBib())) {
+				return true;
+			}
+		} return false;
+	}
+	
+	public Integer getIndexOfContestantToRemove(Contestant contestant){
+		for(Contestant c : getContestants()) {
+			if (c.getContestantBib().equals(contestant.getContestantBib())) {
+				return listOfContestants.indexOf(c);
+			}
+		} return 0;
+	}
+	
+	public long deleteContestant(Integer index) {
+		listOfContestants.remove(index);
 		return 1;
 	}
 	
@@ -22,10 +39,12 @@ public class ContestantService {
 		return listOfContestants;
 	}
 	
+	
 	public boolean isAlreadyInStartlist(Contestant contestant) {
 		for(Contestant c : getContestants()) {
-			if (c.getContestantName().equals(contestant.getContestantName()) && 
-				c.getContestantSurname().equals(contestant.getContestantSurname())) {
+			if ((c.getContestantName().equals(contestant.getContestantName()) && 
+				c.getContestantSurname().equals(contestant.getContestantSurname())) || 
+				c.getContestantBib().equals(contestant.getContestantBib())	) {
 				return true;
 			}
 		}
