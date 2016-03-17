@@ -1,23 +1,20 @@
 package vaadin.views;
 
-import java.util.List;
-
+import com.vaadin.data.Validator;
+import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.Field;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
-import vaadin.MyUI;
 import vaadin.models.Contestant;
 import vaadin.services.ContestantService;
 
@@ -32,8 +29,6 @@ public class ContestantsView extends CssLayout implements View {
 	private TextField contestantName;
 	private TextField contestantSurname;
 	private TextField contestantNation;
-	private Label emptyLabel;
-	private Label emptyLabel2;
 	public static String userInSession;
 	
 	ContestantService contestantservice;
@@ -47,8 +42,6 @@ public class ContestantsView extends CssLayout implements View {
 		createContestant = new Button("Dodaj");
 		updateContestant = new Button("Aktualizuj");
 		deleteContestant = new Button("Usuń");
-		emptyLabel = new Label("");
-		emptyLabel2 = new Label("");
 		
 		//Integer width = UI.getCurrent().getPage().getBrowserWindowWidth();
 		//width = width/3;
@@ -70,6 +63,51 @@ public class ContestantsView extends CssLayout implements View {
 		contestantName = new TextField("Name");
 		contestantSurname = new TextField("Surname");
 		contestantNation = new TextField("Nation");
+		
+		// ustawienie "wymagane" do kazdego z pol CRUD
+		for(Field<?> f: new Field<?>[]{ this.contestantBib, this.contestantName, this.contestantSurname, this.contestantNation }){
+			f.setRequired(true);
+			f.setRequiredError("This field is required.");
+		}
+		
+		this.contestantBib.addValidator(new Validator(){
+			
+			@Override
+			public void validate(Object value) throws InvalidValueException {
+				String bib = value == null ? "" : value.toString();
+				if(!bib.matches("[0-9]{1,2}")) throw new InvalidValueException("BIB must contain only 1 lub 2 digits!");
+			}
+		});
+		
+		this.contestantName.addValidator(new Validator(){
+			
+			@Override
+			public void validate(Object value) throws InvalidValueException {
+				String name = value == null ? "" : value.toString();
+				if(name.length() < 2) throw new InvalidValueException("Name must be at least 2 letters");
+				if(!name.matches("[A-ZĄĆĘŁŃÓŚŻŹ]{1}[a-ząćęłńóśżź]+")) throw new InvalidValueException("Name must contain one capital letter and letters ");
+			}
+		});
+		
+		this.contestantSurname.addValidator(new Validator(){
+			
+			@Override
+			public void validate(Object value) throws InvalidValueException {
+				String surname = value == null ? "" : value.toString();
+				if(surname.length() < 2) throw new InvalidValueException("Surname must be at least 2 letters");
+				if(!surname.matches("[A-ZĄĆĘŁŃÓŚŻŹ]{1}[a-ząćęłńóśżź]+")) throw new InvalidValueException("Surname must contain one capital letter and letters ");
+			}
+		});
+		
+		this.contestantNation.addValidator(new Validator(){
+			
+			@Override
+			public void validate(Object value) throws InvalidValueException {
+				String nation = value == null ? "" : value.toString();
+				if(nation.length() < 5) throw new InvalidValueException("Nation must be at least 5 letters");
+				if(!nation.matches("[A-Z]{1}[a-z]+")) throw new InvalidValueException("Nation must contain one capital letter and letters ");
+			}
+		});
 		
 		// widok dla administratora
 		if(userInSession.equals("admin")){
@@ -103,27 +141,29 @@ public class ContestantsView extends CssLayout implements View {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
-				Integer bib = Integer.parseInt(contestantBib.getValue());
-				String name = contestantName.getValue();
-				String surname = contestantSurname.getValue();
-				String nation = contestantNation.getValue();
-				contestant = new Contestant(bib,name,surname,nation);
-				if(!contestantservice.isAlreadyInStartlist(contestant)){	
-					//getSession().setAttribute("username", username.getValue());
-					contestantservice.addContestant(contestant);
-					Integer numberOfRows = startListTable.size();
-					startListTable.addItem(new Object[]{bib,name,surname,nation}, numberOfRows+1);
-					//String username_text = String.valueOf(getSession().getAttribute("username"));
-					//getUI().getNavigator().navigateTo("Contestants");
-					contestantName.clear();
-					contestantSurname.clear();
-					contestantBib.clear();
-					contestantNation.clear();
-					contestantName.focus();
-					Notification.show("Added!",Notification.Type.WARNING_MESSAGE);
-				} else {
-					Notification.show("This contestant is already in the startlist!",Notification.Type.ERROR_MESSAGE);
-				}
+				if(contestantBib.isValid() && contestantName.isValid() && contestantSurname.isValid() && contestantNation.isValid()){
+					Integer bib = Integer.parseInt(contestantBib.getValue());
+					String name = contestantName.getValue();
+					String surname = contestantSurname.getValue();
+					String nation = contestantNation.getValue();
+					contestant = new Contestant(bib,name,surname,nation);
+					if(!contestantservice.isAlreadyInStartlist(contestant)){	
+						//getSession().setAttribute("username", username.getValue());
+						contestantservice.addContestant(contestant);
+						Integer numberOfRows = startListTable.size();
+						startListTable.addItem(new Object[]{bib,name,surname,nation}, numberOfRows+1);
+						//String username_text = String.valueOf(getSession().getAttribute("username"));
+						//getUI().getNavigator().navigateTo("Contestants");
+						contestantName.clear();
+						contestantSurname.clear();
+						contestantBib.clear();
+						contestantNation.clear();
+						contestantName.focus();
+						Notification.show("Added!",Notification.Type.WARNING_MESSAGE);
+					} else {
+						Notification.show("This contestant is already in the startlist!",Notification.Type.ERROR_MESSAGE);
+					}
+				} else Notification.show("One or more fields contains invalid values.",Notification.Type.ERROR_MESSAGE);
 			}
 		});
 		
@@ -131,24 +171,26 @@ public class ContestantsView extends CssLayout implements View {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
-				Integer bib = Integer.parseInt(contestantBib.getValue());
-				contestant = new Contestant(bib,"nic","nic","nic");
-				
-				if(contestantservice.isBibInStartlist(contestant)){	
-					Integer index = contestantservice.getIndexOfContestantToRemove(contestant);
-					contestantservice.deleteContestant(index);
-					//Integer sprawdzam = contestantservice.deleteContestant(index);
-					//Notification.show(" "+sprawdzam,Notification.Type.ERROR_MESSAGE);
-					contestantName.clear();
-					contestantSurname.clear();
-					contestantBib.clear();
-					contestantNation.clear();
-					contestantName.focus();
-					Notification.show("Contestants with bib "+bib+" was removed!",Notification.Type.WARNING_MESSAGE);
-					getUI().getNavigator().navigateTo("Contestants");
-				} else {
-					Notification.show("This bib is not in the startlist!",Notification.Type.ERROR_MESSAGE);
-				}
+				if(contestantBib.isValid()){
+					Integer bib = Integer.parseInt(contestantBib.getValue());
+					contestant = new Contestant(bib,"nic","nic","nic");
+					
+					if(contestantservice.isBibInStartlist(contestant)){	
+						Integer index = contestantservice.getIndexOfContestantToRemove(contestant);
+						contestantservice.deleteContestant(index);
+						//Integer sprawdzam = contestantservice.deleteContestant(index);
+						//Notification.show(" "+sprawdzam,Notification.Type.ERROR_MESSAGE);
+						contestantName.clear();
+						contestantSurname.clear();
+						contestantBib.clear();
+						contestantNation.clear();
+						contestantName.focus();
+						Notification.show("Contestants with bib "+bib+" was removed!",Notification.Type.WARNING_MESSAGE);
+						getUI().getNavigator().navigateTo("Contestants");
+					} else {
+						Notification.show("This bib is not in the startlist!",Notification.Type.ERROR_MESSAGE);
+					}
+				} else Notification.show("BIB field contains invalid value.",Notification.Type.ERROR_MESSAGE);
 			}
 		});
 		
@@ -156,25 +198,27 @@ public class ContestantsView extends CssLayout implements View {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
-				Integer bib = Integer.parseInt(contestantBib.getValue());
-				contestant = new Contestant(bib,"nic","nic","nic");
-				
-				if(contestantservice.isBibInStartlist(contestant)){	
-					Integer index = contestantservice.getIndexOfContestantToRemove(contestant);
-					contestant = new Contestant(bib,contestantName.getValue(),contestantSurname.getValue(),contestantNation.getValue());
-					contestantservice.updateContestant(contestant,index);
-					//Integer sprawdzam = contestantservice.deleteContestant(index);
-					//Notification.show(" "+sprawdzam,Notification.Type.ERROR_MESSAGE);
-					contestantName.clear();
-					contestantSurname.clear();
-					contestantBib.clear();
-					contestantNation.clear();
-					contestantName.focus();
-					Notification.show("Contestants with bib "+bib+" was updated!",Notification.Type.WARNING_MESSAGE);
-					getUI().getNavigator().navigateTo("Contestants");
-				} else {
-					Notification.show("This bib is not in the startlist!",Notification.Type.ERROR_MESSAGE);
-				}
+				if(contestantBib.isValid() && contestantName.isValid() && contestantSurname.isValid() && contestantNation.isValid()){
+					Integer bib = Integer.parseInt(contestantBib.getValue());
+					contestant = new Contestant(bib,"nic","nic","nic");
+					
+					if(contestantservice.isBibInStartlist(contestant)){	
+						Integer index = contestantservice.getIndexOfContestantToRemove(contestant);
+						contestant = new Contestant(bib,contestantName.getValue(),contestantSurname.getValue(),contestantNation.getValue());
+						contestantservice.updateContestant(contestant,index);
+						//Integer sprawdzam = contestantservice.deleteContestant(index);
+						//Notification.show(" "+sprawdzam,Notification.Type.ERROR_MESSAGE);
+						contestantName.clear();
+						contestantSurname.clear();
+						contestantBib.clear();
+						contestantNation.clear();
+						contestantName.focus();
+						Notification.show("Contestants with bib "+bib+" was updated!",Notification.Type.WARNING_MESSAGE);
+						getUI().getNavigator().navigateTo("Contestants");
+					} else {
+						Notification.show("This bib is not in the startlist!",Notification.Type.ERROR_MESSAGE);
+					}
+				} else Notification.show("One or more fields contains invalid values.",Notification.Type.ERROR_MESSAGE);
 			}
 		});
 	}

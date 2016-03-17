@@ -101,15 +101,18 @@ public class RegistrationView extends FormLayout implements View, Button.ClickLi
 				username.setValue("");
 				passwd.setValue("");
 				retyped.setValue("");
-				
-				getUI().getNavigator().navigateTo("Login");
-				
+				//String username_text = String.valueOf(getSession().getAttribute("username"));
+				if(getSession().getAttribute("username") == null){
+					getUI().getNavigator().navigateTo("Login");
+				} else {
+					getUI().getNavigator().navigateTo("Contestants");
+				}
 				// jesli tak to wyswietlamy komunikat, ze jest zajety
 			} else {
 				Notification.show(username.getValue()+" account already exist! Choose another account name. ",Notification.Type.ERROR_MESSAGE);
 				username.clear();
 			}
-		} else Notification.show("One or more fields contains invalid values.");
+		} else Notification.show("One or more fields contains invalid values.",Notification.Type.ERROR_MESSAGE);
 		
 	}
 

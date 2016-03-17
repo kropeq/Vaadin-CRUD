@@ -70,7 +70,7 @@ public class LoginView extends FormLayout implements View, Button.ClickListener 
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							if(getSession().getAttribute("username").equals("null")){
+							if(getSession().getAttribute("username") == null){
 								MyUI.login.setVisible(true);
 								MyUI.logout.setVisible(false);
 							} else {

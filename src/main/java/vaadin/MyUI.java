@@ -100,11 +100,11 @@ public class MyUI extends UI {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
-			String username_test = String.valueOf(getSession().getAttribute("username"));
-			if(username_test != "null"){
-				Notification.show("You are logged in already! You can do it only once.",Notification.Type.ERROR_MESSAGE);
-			} else {
+			//String username_test = String.valueOf(getSession().getAttribute("username"));
+			if(getSession().getAttribute("username") == null){
 				navigator.navigateTo("Login");
+			} else {
+				Notification.show("You are logged in already! You can do it only once.",Notification.Type.ERROR_MESSAGE);	
 			}
         }
         });
