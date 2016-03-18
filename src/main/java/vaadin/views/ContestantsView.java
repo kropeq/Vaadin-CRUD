@@ -1,7 +1,9 @@
 package vaadin.views;
 
+import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
 import com.vaadin.data.Validator.InvalidValueException;
+import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button;
@@ -49,7 +51,7 @@ public class ContestantsView extends CssLayout implements View {
 		startListTable.setWidth("450px");
 		startListTable.addContainerProperty("Bib", Integer.class, null);
 		startListTable.addContainerProperty("Name", String.class, null);
-		startListTable.addContainerProperty("Surame", String.class, null);
+		startListTable.addContainerProperty("Surname", String.class, null);
 		startListTable.addContainerProperty("Nation", String.class, null);
 		
 		Integer numberOfRows;
@@ -109,9 +111,17 @@ public class ContestantsView extends CssLayout implements View {
 			}
 		});
 		
+		// Sortowanie tabeli po wlasciwosci "Bib" przy uruchamianiu widoku
+		Object [] properties={"Bib"};
+		boolean [] ordering={true};
+		startListTable.sort(properties, ordering);
+		
 		// widok dla administratora
 		if(userInSession.equals("admin")){
 			// prawa czesc widoku
+			startListTable.setEditable(true);
+			
+			//Object rowId = startListtable.getValue();
 			CRUDForm = new GridLayout(2,2);
 			CRUDForm.addComponent(contestantName);
 			CRUDForm.addComponent(contestantSurname);
@@ -137,6 +147,22 @@ public class ContestantsView extends CssLayout implements View {
 			this.addComponent(contents);
 		}
 		
+		// Naciśnięcie w Tabli na któryś wiersz spowoduje uzupełnieine danych w formularzu
+		startListTable.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+		    @Override
+		    public void itemClick(ItemClickEvent itemClickEvent) {
+		    	Item item = startListTable.getItem(itemClickEvent.getItemId());
+		        Object Bib = item.getItemProperty("Bib").getValue();
+		        Object Name = item.getItemProperty("Name").getValue();
+		        Object Surname = item.getItemProperty("Surname").getValue();
+		        Object Nation = item.getItemProperty("Nation").getValue();
+		        contestantName.setValue(Name.toString());
+		        contestantSurname.setValue(Surname.toString());
+		        contestantNation.setValue(Nation.toString());
+		        contestantBib.setValue(Bib.toString());
+		    }
+		});
+		
 		createContestant.addClickListener(new Button.ClickListener() {
 			
 			@Override
@@ -160,6 +186,7 @@ public class ContestantsView extends CssLayout implements View {
 						contestantNation.clear();
 						contestantName.focus();
 						Notification.show("Added!",Notification.Type.WARNING_MESSAGE);
+						getUI().getNavigator().navigateTo("Contestants");
 					} else {
 						Notification.show("This contestant is already in the startlist!",Notification.Type.ERROR_MESSAGE);
 					}
