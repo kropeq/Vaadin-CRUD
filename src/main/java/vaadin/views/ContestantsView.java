@@ -41,18 +41,22 @@ public class ContestantsView extends CssLayout implements View {
 		
 		contestantservice = new ContestantService();
 		
-		createContestant = new Button("Dodaj");
-		updateContestant = new Button("Aktualizuj");
-		deleteContestant = new Button("Usuń");
+		createContestant = new Button("Add");
+		updateContestant = new Button("Update");
+		deleteContestant = new Button("Delete");
 		
 		//Integer width = UI.getCurrent().getPage().getBrowserWindowWidth();
 		//width = width/3;
 		startListTable = new Table("Start list");
-		startListTable.setWidth("450px");
+		startListTable.setWidth("400px");
 		startListTable.addContainerProperty("Bib", Integer.class, null);
 		startListTable.addContainerProperty("Name", String.class, null);
 		startListTable.addContainerProperty("Surname", String.class, null);
 		startListTable.addContainerProperty("Nation", String.class, null);
+		startListTable.setColumnWidth("Bib", 100);
+		startListTable.setColumnWidth("Name", 100);
+		startListTable.setColumnWidth("Surname", 100);
+		startListTable.setColumnWidth("Nation", 100);
 		
 		Integer numberOfRows;
 		//List contestantsInStartlist = contestantservice.getContestants();

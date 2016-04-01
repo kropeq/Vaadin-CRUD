@@ -47,8 +47,8 @@ public class LoginView extends FormLayout implements View, Button.ClickListener 
     	username.addStyleName("centered");
     	password.addStyleName("centered");
     	
-    	login = new Button("Zaloguj");
-    	forgot = new Button("Zapomniałeś hasła?");
+    	login = new Button("Login");
+    	forgot = new Button("Forgot password?");
     	
     	login.setSizeFull();
     	login.addClickListener(new Button.ClickListener() {
