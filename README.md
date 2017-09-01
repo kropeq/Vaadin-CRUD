@@ -1,18 +1,25 @@
-Projekt Vaadin ( Bogaty Interfejs U¿ytkownika )
-==============
-____
+##  Projekt z uÅ¼yciem frameworka Vaadin
 
-##### Witam w moim repozytorium. Projekt wykonuje ja, czyli:
-* Micha³ Jaworowski ( nr 206296 )
+----
+### Cel projektu
 
+Poznanie podstawowych moÅ¼liwoÅ›ci frameworka Vaadin. W tym celu stworzyÅ‚em rejestracjÄ™, logowanie, obsÅ‚ugÄ™ pÃ³l, komunikaty poprawnoÅ›ci, rozpoznawanie sesji oraz CRUD( create, read, update, delete ) do tworzenia listy startowej skoczkÃ³w narciarskich.
 
-____
+----
+### Wykorzystane narzÄ™dzia
 
-##### Temat
-Tematem mojego projektu jest tworzenie listy startowej zawodników skoków narciarskich( CRUD ).
-W póŸniejszej fazie projektu byæ mo¿e rozszerzê ten temat.
+* apache maven 3.3.9
+* eclipse jee mars 1
 
+----
+### Uprawnienia aktorÃ³w
 
-____
-##### Jak to zosta³o zrobione?
-Do stworzenia projektu wykorzysta³em maven'a oraz eclipse jako narzêdzie do kontroli wersji.
+* _administrator_ - zgÅ‚aszanie i usuwanie zawodnikÃ³w z listy startowej
+* _uÅ¼ytkownik_ - przeglÄ…danie listy startowej i zakÅ‚adanie kont
+
+----
+### Uruchamianie projektu
+
+* Kompilacja projektu: "mvn install"
+* Uruchomienie projektu na serwerze jetty: "mvn jetty:run"
+* Projekt dostÄ™pny pod adresem: "http://localhost:8080/"
